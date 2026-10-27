@@ -68,7 +68,17 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 .group h2 { font-weight: 400; }
 .companies { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 14px; }
 .company { display: flex; align-items: center; gap: 8px; }
-.org { min-width: 0; }
+.org {
+  min-width: 0;
+  background-image: linear-gradient(var(--rule), var(--rule));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  padding-bottom: 2px;
+  transition: background-size .35s ease;
+}
+.org:hover, .org:focus-visible { background-size: 100% 1px; }
+@media (prefers-reduced-motion: reduce) { .org { transition: none; } }
 .dur { color: var(--muted); opacity: .75; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .logo {
   flex: none; width: 20px; height: 20px; border-radius: 5px;
@@ -145,20 +155,20 @@ figcaption a { text-decoration: underline; text-underline-offset: 2px; text-deco
     <section class="group">
       <h2 class="muted">Work</h2>
       <ul class="companies">
-        <li class="company"><span class="org">YouTube</span></li>
-        <li class="company"><span class="org">Meta</span></li>
-        <li class="company"><span class="org">Google</span></li>
-        <li class="company"><span class="org">frog</span></li>
-        <li class="company"><span class="org">Smart Design</span></li>
-        <li class="company"><span class="org">YouTube Music</span></li>
+        <li class="company"><a class="org" href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a></li>
+        <li class="company"><a class="org" href="https://www.meta.com" target="_blank" rel="noopener">Meta</a></li>
+        <li class="company"><a class="org" href="https://www.google.com" target="_blank" rel="noopener">Google</a></li>
+        <li class="company"><a class="org" href="https://www.frog.co" target="_blank" rel="noopener">frog</a></li>
+        <li class="company"><a class="org" href="https://smartdesignworldwide.com" target="_blank" rel="noopener">Smart Design</a></li>
+        <li class="company"><a class="org" href="https://music.youtube.com" target="_blank" rel="noopener">YouTube Music</a></li>
       </ul>
     </section>
 
     <section class="group">
       <h2 class="muted">Education</h2>
       <ul class="companies">
-        <li class="company"><span class="org">School of Visual Arts, MFA</span></li>
-        <li class="company"><span class="org">Syracuse University</span></li>
+        <li class="company"><a class="org" href="https://sva.edu" target="_blank" rel="noopener">School of Visual Arts, MFA</a></li>
+        <li class="company"><a class="org" href="https://www.syracuse.edu" target="_blank" rel="noopener">Syracuse University</a></li>
       </ul>
     </section>
 
