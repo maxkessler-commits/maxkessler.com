@@ -67,7 +67,7 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 .group { display: flex; flex-direction: column; gap: 12px; }
 .group h2 { font-weight: 400; }
 .companies { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 14px; }
-.company { display: flex; align-items: center; gap: 8px; }
+.company { display: flex; align-items: baseline; gap: 8px; }
 .org {
   min-width: 0;
   background-image: linear-gradient(var(--rule), var(--rule));
@@ -79,14 +79,6 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 }
 .org:hover, .org:focus-visible { background-size: 100% 1px; }
 @media (prefers-reduced-motion: reduce) { .org { transition: none; } }
-.dur { color: var(--muted); opacity: .75; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.logo {
-  flex: none; width: 20px; height: 20px; border-radius: 5px;
-  display: grid; place-items: center;
-  background: var(--tile);
-  font-size: 10px; font-weight: 500; color: var(--muted);
-}
-.logo img { width: 100%; height: 100%; object-fit: contain; border-radius: 5px; background: #fff; }
 .rail-foot { margin-top: auto; display: flex; flex-direction: row; gap: 16px; color: var(--muted); }
 .rail-foot { align-items: center; }
 .clock { font-variant-numeric: tabular-nums; }
