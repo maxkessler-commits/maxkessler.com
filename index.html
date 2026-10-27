@@ -132,10 +132,6 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
   display: flex; align-items: flex-end; padding: 16px;
   color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums;
 }
-.card.photo { position: relative; overflow: hidden; margin: 0; padding: 0; }
-.card.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; }
-.card.photo figcaption { position: absolute; left: 12px; bottom: 12px; font-size: 12px; padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--bg) 80%, transparent); color: var(--muted); }
-.card.photo figcaption a:hover { color: var(--fg); }
 @media (prefers-reduced-motion: reduce) { .track { scroll-behavior: auto; } }
 
 /* Phone: stack, page scrolls as a whole */
@@ -229,7 +225,7 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
           </div>
         </div>
         <div class="track">
-          <figure class="card photo" role="group" aria-label="Family Center in Instagram"><img src="https://about.fb.com/wp-content/uploads/2022/03/Introducing-Family-Center-and-Parental-Supervision-Tools-on-IG-and-VR_Inline_01.jpg" alt="Product mocks of Family Center in Instagram" loading="lazy" onerror="this.remove()"><figcaption><a href="https://about.fb.com/news/2022/03/parental-supervision-tools-instagram-vr/" target="_blank" rel="noopener">Family Center · Image: Meta</a></figcaption></figure>
+          <div class="card" role="group" aria-label="Instagram image 1 of 3">1 / 3</div>
           <div class="card" role="group" aria-label="Instagram image 2 of 3">2 / 3</div>
           <div class="card" role="group" aria-label="Instagram image 3 of 3">3 / 3</div>
         </div>
@@ -299,18 +295,10 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
         </div>
       </section>
 
-      <section class="project" id="sva" aria-label="School of Visual Arts, MFA">
+      <section class="project" id="sva" aria-label="School of Visual Arts">
         <div class="project-head">
-          <h2>School of Visual Arts, MFA</h2>
+          <h2>School of Visual Arts</h2>
           <span class="role-title">MFA</span>
-          <div class="arrows">
-            <button class="arrow" type="button" data-dir="-1" aria-label="Previous School of Visual Arts, MFA image">‹</button>
-            <button class="arrow" type="button" data-dir="1" aria-label="Next School of Visual Arts, MFA image">›</button>
-          </div>
-        </div>
-        <div class="track">
-          <figure class="card photo" role="group" aria-label="SVA on East 23rd Street"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/SVA_East_23rd.jpg?width=2000" alt="SVA on East 23rd Street" loading="lazy" onerror="this.remove()"><figcaption><a href="https://commons.wikimedia.org/wiki/File:SVA_East_23rd.jpg" target="_blank" rel="noopener">Photo: Wikimedia Commons</a></figcaption></figure>
-          <figure class="card photo" role="group" aria-label="School of Visual Arts building"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/School_of_Visual_Arts_%28SVA_NYC%29_%2851708609282%29.jpg?width=2000" alt="School of Visual Arts building" loading="lazy" onerror="this.remove()"><figcaption><a href="https://commons.wikimedia.org/wiki/File:School_of_Visual_Arts_%28SVA_NYC%29_%2851708609282%29.jpg" target="_blank" rel="noopener">Photo: Wikimedia Commons</a></figcaption></figure>
         </div>
       </section>
 
@@ -318,14 +306,6 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
         <div class="project-head">
           <h2>Syracuse University</h2>
           <span class="role-title">Bachelor of Industrial Design</span>
-          <div class="arrows">
-            <button class="arrow" type="button" data-dir="-1" aria-label="Previous Syracuse University image">‹</button>
-            <button class="arrow" type="button" data-dir="1" aria-label="Next Syracuse University image">›</button>
-          </div>
-        </div>
-        <div class="track">
-          <figure class="card photo" role="group" aria-label="Crouse College, Syracuse University"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Crouse_College_Syracuse_University_01.jpg?width=2000" alt="Crouse College, Syracuse University" loading="lazy" onerror="this.remove()"><figcaption><a href="https://commons.wikimedia.org/wiki/File:Crouse_College_Syracuse_University_01.jpg" target="_blank" rel="noopener">Photo: Wikimedia Commons</a></figcaption></figure>
-          <figure class="card photo" role="group" aria-label="Crouse College, Maxwell Hall and the Tolley Building"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Crouse_College%2C_Maxwell_Hall%2C_Tolley_Building_at_Syracuse_University.jpg?width=2000" alt="Crouse College, Maxwell Hall and the Tolley Building" loading="lazy" onerror="this.remove()"><figcaption><a href="https://commons.wikimedia.org/wiki/File:Crouse_College%2C_Maxwell_Hall%2C_Tolley_Building_at_Syracuse_University.jpg" target="_blank" rel="noopener">Photo: Wikimedia Commons</a></figcaption></figure>
         </div>
       </section>
     </div>
