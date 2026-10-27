@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Max Kessler</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap">
 <style>
-/* Layout: fixed left rail of companies | 1px rule | independently scrolling right column. One typeface, two sizes, two weights. */
+/* Layout: fixed left rail of companies | 1px rule | independently scrolling right column. One typeface (Inter), one size, two weights. */
 :root {
   --bg: #fbfbfa;
   --fg: #1b1c1e;
   --muted: #74777c;
   --rule: #dcdddf;
   --tile: #eeefef;
-  --font: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-  --size: 15px;
-  --size-lg: 17px;
+  --font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --size: 14px;
+  --size-lg: 14px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -95,8 +95,8 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
   padding-left: 48px;
   padding-right: max(48px, env(safe-area-inset-right, 0px));
 }
-.feed-inner { display: flex; flex-direction: column; gap: 96px; }
-.blurb { display: flex; flex-direction: column; gap: 16px; max-width: 60ch; font-size: 20px; line-height: 1.5; text-wrap: pretty; }
+.feed-inner { display: flex; flex-direction: column; gap: 72px; }
+.blurb { display: flex; flex-direction: column; gap: 12px; max-width: 62ch; text-wrap: pretty; }
 .blurb .lead { font-size: var(--size-lg); }
 
 .out { color: var(--muted); opacity: 0; transition: opacity .15s, color .15s; padding: 0 4px; margin: 0 -4px; }
@@ -130,7 +130,7 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
   scroll-snap-align: start;
   background: var(--tile); border-radius: 12px;
   display: flex; align-items: flex-end; padding: 16px;
-  color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums;
+  color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums;
 }
 @media (prefers-reduced-motion: reduce) { .track { scroll-behavior: auto; } }
 
@@ -152,7 +152,6 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
   }
   .card { flex-basis: 86%; }
   .project { scroll-margin-top: 16px; }
-  .blurb { font-size: 18px; gap: 14px; }
 }
 </style>
 </head>
