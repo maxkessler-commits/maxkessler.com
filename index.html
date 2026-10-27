@@ -88,6 +88,11 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 }
 .logo img { width: 100%; height: 100%; object-fit: contain; border-radius: 5px; background: #fff; }
 .rail-foot { margin-top: auto; display: flex; flex-direction: row; gap: 16px; color: var(--muted); }
+.rail-foot { align-items: center; }
+.clock { font-variant-numeric: tabular-nums; }
+.colon { animation: blink 1s steps(1, end) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .colon { animation: none; } }
 .icon-link { display: inline-flex; padding: 4px; margin: -4px; border-radius: 4px; transition: color .15s; }
 .icon-link:hover { color: var(--fg); }
 
@@ -174,6 +179,7 @@ figcaption a { text-decoration: underline; text-underline-offset: 2px; text-deco
 
     <nav class="rail-foot" aria-label="Contact">
       <a class="icon-link" href="mailto:maxhkessler@gmail.com" aria-label="Email Max" title="Email"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg></a>
+      <span class="where">Based in New York · <span class="clock" id="nyc" aria-label="Current time in New York"><span id="nyc-h">12</span><span class="colon">:</span><span id="nyc-m">00</span> <span id="nyc-ap">PM</span></span></span>
     </nav>
   </aside>
 
@@ -247,6 +253,21 @@ figcaption a { text-decoration: underline; text-underline-offset: 2px; text-deco
     i = (i + 1) % titles.length;
     flip(titles[i]);
   }, 3600);
+})();
+</script>
+
+<script>
+(function () {
+  var h = document.getElementById('nyc-h'), m = document.getElementById('nyc-m'), ap = document.getElementById('nyc-ap');
+  if (!h) return;
+  var fmt = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit', hour12: true });
+  function tick() {
+    var parts = fmt.formatToParts(new Date()), o = {};
+    parts.forEach(function (p) { o[p.type] = p.value; });
+    h.textContent = o.hour; m.textContent = o.minute; ap.textContent = (o.dayPeriod || '').toUpperCase();
+  }
+  tick();
+  setInterval(tick, 5000);
 })();
 </script>
 </body>
