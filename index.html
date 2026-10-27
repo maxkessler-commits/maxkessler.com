@@ -77,7 +77,9 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
   font-size: 10px; font-weight: 500; color: var(--muted);
 }
 .logo img { width: 100%; height: 100%; object-fit: contain; border-radius: 5px; background: #fff; }
-.rail-foot { margin-top: auto; display: flex; flex-direction: column; gap: 4px; color: var(--muted); }
+.rail-foot { margin-top: auto; display: flex; flex-direction: row; gap: 16px; color: var(--muted); }
+.icon-link { display: inline-flex; padding: 4px; margin: -4px; border-radius: 4px; transition: color .15s; }
+.icon-link:hover { color: var(--fg); }
 
 /* Right */
 .feed {
@@ -161,8 +163,8 @@ figcaption a { text-decoration: underline; text-underline-offset: 2px; text-deco
     </section>
 
     <nav class="rail-foot" aria-label="Contact">
-      <a href="https://www.linkedin.com/in/maxkessler/" target="_blank" rel="noopener">LinkedIn ↗</a>
-      <a href="mailto:maxhkessler@gmail.com">Contact</a>
+      <a class="icon-link" href="mailto:maxhkessler@gmail.com" aria-label="Email Max" title="Email"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg></a>
+      <a class="icon-link" href="https://www.linkedin.com/in/maxkessler/" target="_blank" rel="noopener" aria-label="LinkedIn profile" title="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7"/><path d="M3 12.5h18"/></svg></a>
     </nav>
   </aside>
 
