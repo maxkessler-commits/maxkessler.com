@@ -95,8 +95,8 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
   padding-left: 48px;
   padding-right: max(48px, env(safe-area-inset-right, 0px));
 }
-.feed-inner { max-width: 680px; display: flex; flex-direction: column; gap: 48px; }
-.blurb { display: flex; flex-direction: column; gap: 16px; max-width: 60ch; font-size: 20px; line-height: 1.5; }
+.feed-inner { max-width: 820px; display: flex; flex-direction: column; gap: 48px; }
+.blurb { display: flex; flex-direction: column; gap: 24px; max-width: 60ch; font-size: 32px; line-height: 1.35; letter-spacing: -0.01em; text-wrap: pretty; }
 .blurb .lead { font-size: var(--size-lg); }
 
 .media { display: flex; flex-direction: column; gap: 32px; }
@@ -137,6 +137,7 @@ figcaption a { text-decoration: underline; text-underline-offset: 2px; text-deco
     padding-right: max(20px, env(safe-area-inset-right, 0px));
   }
   .pair { grid-template-columns: 1fr; }
+  .blurb { font-size: 24px; gap: 18px; }
 }
 </style>
 </head>
