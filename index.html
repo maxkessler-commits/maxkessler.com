@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Max Kessler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&display=swap">
+<style>
+/* Layout: fixed left rail of companies | 1px rule | independently scrolling right column. One typeface, two sizes, two weights. */
+:root {
+  --bg: #fbfbfa;
+  --fg: #1b1c1e;
+  --muted: #74777c;
+  --rule: #dcdddf;
+  --tile: #eeefef;
+  --font: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --size: 13px;
+  --size-lg: 15px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131416; --fg: #e9e9e7; --muted: #8e9196; --rule: #2a2c30; --tile: #1d1f22;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131416; --fg: #e9e9e7; --muted: #8e9196; --rule: #2a2c30; --tile: #1d1f22;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font); font-size: var(--size); font-weight: 400; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, p, ul, figure { margin: 0; }
+h1, h2 { font-size: inherit; font-weight: 500; }
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--fg); }
+a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radius: 2px; }
+.muted { color: var(--muted); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.flap { display: inline-block; white-space: pre; font-variant-numeric: tabular-nums; }
+.flap .c { display: inline-block; }
+.flap .c.spin { color: var(--rule); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .flap .c.spin { color: var(--muted); opacity: .55; } }
+:root[data-theme="dark"] .flap .c.spin { color: var(--muted); opacity: .55; }
+
+.site {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) 1fr;
+}
+
+/* Left */
+.rail {
+  border-right: 1px solid var(--rule);
+  display: flex; flex-direction: column; gap: 40px;
+  padding-block: 48px;
+  padding-left: max(32px, env(safe-area-inset-left, 0px));
+  padding-right: 32px;
+  overflow-y: auto;
+}
+.name { font-size: var(--size-lg); }
+.group { display: flex; flex-direction: column; gap: 12px; }
+.group h2 { font-weight: 400; }
+.companies { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.company { display: flex; align-items: center; gap: 8px; }
+.org { min-width: 0; }
+.dur { color: var(--muted); opacity: .75; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.logo {
+  flex: none; width: 20px; height: 20px; border-radius: 5px;
+  display: grid; place-items: center;
+  background: var(--tile);
+  font-size: 10px; font-weight: 500; color: var(--muted);
+}
+.logo img { width: 100%; height: 100%; object-fit: contain; border-radius: 5px; background: #fff; }
+.rail-foot { margin-top: auto; display: flex; flex-direction: column; gap: 4px; color: var(--muted); }
+
+/* Right */
+.feed {
+  overflow-y: auto; min-width: 0;
+  padding-block: 48px 96px;
+  padding-left: 48px;
+  padding-right: max(48px, env(safe-area-inset-right, 0px));
+}
+.feed-inner { max-width: 680px; display: flex; flex-direction: column; gap: 48px; }
+.blurb { display: flex; flex-direction: column; gap: 12px; max-width: 60ch; }
+.blurb .lead { font-size: var(--size-lg); }
+
+.media { display: flex; flex-direction: column; gap: 32px; }
+.item { display: flex; flex-direction: column; gap: 8px; }
+.frame {
+  width: 100%; max-width: 100%;
+  background: var(--tile); border-radius: 4px; overflow: hidden;
+  display: grid; place-items: center; color: var(--muted);
+}
+.frame img, .frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.r-16-9 { aspect-ratio: 16 / 9; }
+.r-4-3 { aspect-ratio: 4 / 3; }
+.r-1-1 { aspect-ratio: 1 / 1; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.play {
+  width: 0; height: 0; margin-left: 4px;
+  border-left: 16px solid var(--muted); border-top: 10px solid transparent; border-bottom: 10px solid transparent;
+}
+figcaption { color: var(--muted); }
+figcaption a { text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--rule); }
+.video { transition: background-color .15s; }
+.video:hover { background: var(--rule); }
+
+/* Phone: stack, page scrolls as a whole */
+@media (max-width: 760px) {
+  html, body { height: auto; }
+  .site { display: block; height: auto; }
+  .rail {
+    border-right: 0; border-bottom: 1px solid var(--rule);
+    overflow: visible; gap: 28px; padding-block: 32px;
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+  }
+  .rail-foot { margin-top: 0; flex-direction: row; gap: 16px; flex-wrap: wrap; }
+  .feed {
+    overflow: visible; padding-block: 32px 64px;
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+  }
+  .pair { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="site">
+  <aside class="rail">
+    <header>
+      <h1 class="name">Max Kessler</h1>
+      <p class="muted"><span class="sr">UX Manager</span><span id="title" class="flap" aria-hidden="true">UX Manager</span></p>
+    </header>
+
+    <section class="group">
+      <h2 class="muted">Work</h2>
+      <ul class="companies">
+        <li class="company"><span class="logo" aria-hidden="true"><img src="https://www.google.com/s2/favicons?domain=youtube.com&amp;sz=64" alt="" width="20" height="20" onerror="this.replaceWith(document.createTextNode('Y'))"></span><span class="org">YouTube</span><span class="dur">59 mo</span></li>
+        <li class="company"><span class="logo" aria-hidden="true"><img src="https://www.google.com/s2/favicons?domain=meta.com&amp;sz=64" alt="" width="20" height="20" onerror="this.replaceWith(document.createTextNode('M'))"></span><span class="org">Meta</span><span class="dur">6 mo</span></li>
+        <li class="company"><span class="logo" aria-hidden="true"><img src="https://www.google.com/s2/favicons?domain=google.com&amp;sz=64" alt="" width="20" height="20" onerror="this.replaceWith(document.createTextNode('G'))"></span><span class="org">Google</span><span class="dur">62 mo</span></li>
+        <li class="company"><span class="logo" aria-hidden="true"><img src="https://www.google.com/s2/favicons?domain=frog.co&amp;sz=64" alt="" width="20" height="20" onerror="this.replaceWith(document.createTextNode('f'))"></span><span class="org">frog</span><span class="dur">4 mo</span></li>
+        <li class="company"><span class="logo" aria-hidden="true"><img src="https://www.google.com/s2/favicons?domain=smartdesignworldwide.com&amp;sz=64" alt="" width="20" height="20" onerror="this.replaceWith(document.createTextNode('S'))"></span><span class="org">Smart Design</span><span class="dur">4 mo</span></li>
+        <li class="company"><span class="logo" aria-hidden="true"><img src="https://www.google.com/s2/favicons?domain=music.youtube.com&amp;sz=64" alt="" width="20" height="20" onerror="this.replaceWith(document.createTextNode('Y'))"></span><span class="org">YouTube Music</span><span class="dur">3 mo</span></li>
+      </ul>
+    </section>
+
+    <section class="group">
+      <h2 class="muted">Education</h2>
+      <ul class="companies">
+        <li class="company"><span class="logo" aria-hidden="true"><img src="https://www.google.com/s2/favicons?domain=sva.edu&amp;sz=64" alt="" width="20" height="20" onerror="this.replaceWith(document.createTextNode('S'))"></span><span class="org">School of Visual Arts, MFA</span><span class="dur">18 mo</span></li>
+      </ul>
+    </section>
+
+    <nav class="rail-foot" aria-label="Contact">
+      <a href="https://www.linkedin.com/in/maxkessler/" target="_blank" rel="noopener">LinkedIn ↗</a>
+    </nav>
+  </aside>
+
+  <main class="feed">
+    <div class="feed-inner">
+      <section class="blurb">
+        <p class="lead">I design at YouTube, helping build a safe and responsible video ecosystem.</p>
+        <p>Before YouTube I led design for a cross-company product at Meta, managing a team of four designers. Earlier I spent several years on Google Workspace, designing for Docs, Slides and Sites. I started out interning at YouTube Music, frog and Smart Design.</p>
+      </section>
+
+      <section class="media" aria-label="Work">
+        <figure class="item">
+          <div class="frame r-16-9"><iframe src="https://www.youtube-nocookie.com/embed/cGWK2AQ1poQ" title="YouTube video" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen style="border:0;width:100%;height:100%"></iframe></div>
+          <figcaption>YouTube Music Analytics · <a href="https://www.youtube.com/watch?v=cGWK2AQ1poQ" target="_blank" rel="noopener">Watch on YouTube ↗</a></figcaption>
+        </figure>
+
+        <figure class="item">
+          <div class="frame r-16-9"><iframe src="https://www.youtube-nocookie.com/embed/AAeloLXO8T0" title="YouTube video" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen style="border:0;width:100%;height:100%"></iframe></div>
+          <figcaption>Link previews in Google Docs · <a href="https://www.youtube.com/watch?v=AAeloLXO8T0" target="_blank" rel="noopener">Watch on YouTube ↗</a></figcaption>
+        </figure>
+
+        <figure class="item">
+          <div class="frame r-4-3">Image</div>
+          <figcaption>Image slot for a project screenshot or photo</figcaption>
+        </figure>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+(function () {
+  var el = document.getElementById('title');
+  if (!el) return;
+  var titles = [
+    'UX Manager',
+    'Design Lead',
+    'Pixel Wrangler',
+    'Interaction Designer',
+    'Chief Button Pusher',
+    'Prototype Tinkerer',
+    'Professional Overthinker',
+    'Corner Radius Critic',
+    'Product Designer',
+    'Layer Name Enforcer',
+    'Team Herder',
+    'Senior Squint Tester',
+    'Head of Hover States'
+  ];
+  var glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var i = 0, busy = false;
+
+  function rand() { return glyphs[Math.floor(Math.random() * glyphs.length)]; }
+
+  function render(chars) {
+    el.innerHTML = '';
+    chars.forEach(function (c) {
+      var s = document.createElement('span');
+      s.className = c.spin ? 'c spin' : 'c';
+      s.textContent = c.ch;
+      el.appendChild(s);
+    });
+  }
+
+  function flip(next) {
+    if (reduce) { el.textContent = next; return; }
+    busy = true;
+    var prev = el.textContent;
+    var len = Math.max(prev.length, next.length);
+    var settle = [];
+    for (var k = 0; k < len; k++) settle.push(4 + k * 1.2 + Math.random() * 6);
+    var frame = 0, last = Math.max.apply(null, settle);
+    var timer = setInterval(function () {
+      var out = [];
+      for (var k = 0; k < len; k++) {
+        if (frame >= settle[k]) {
+          if (k < next.length) out.push({ ch: next[k], spin: false });
+        } else {
+          var target = next[k] || prev[k] || ' ';
+          out.push(target === ' ' && Math.random() < .5 ? { ch: ' ', spin: false } : { ch: rand(), spin: true });
+        }
+      }
+      render(out);
+      frame++;
+      if (frame > last) { clearInterval(timer); el.textContent = next; busy = false; }
+    }, 45);
+  }
+
+  setInterval(function () {
+    if (busy || document.hidden) return;
+    i = (i + 1) % titles.length;
+    flip(titles[i]);
+  }, 3600);
+})();
+</script>
+</body>
+</html>
