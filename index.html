@@ -99,6 +99,10 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 .blurb { display: flex; flex-direction: column; gap: 16px; max-width: 60ch; font-size: 20px; line-height: 1.5; text-wrap: pretty; }
 .blurb .lead { font-size: var(--size-lg); }
 
+.out { color: var(--muted); opacity: 0; transition: opacity .15s, color .15s; padding: 0 4px; margin: 0 -4px; }
+.company:hover .out, .out:focus-visible { opacity: 1; }
+.out:hover { color: var(--fg); }
+@media (hover: none) { .out { opacity: .6; } }
 .org.is-active { background-size: 100% 1px; background-image: linear-gradient(var(--fg), var(--fg)); }
 
 .project { display: flex; flex-direction: column; gap: 16px; scroll-margin-top: 48px; }
@@ -165,20 +169,20 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
     <section class="group">
       <h2 class="muted">Work</h2>
       <ul class="companies">
-        <li class="company"><a class="org" href="#youtube" data-target="youtube">YouTube</a></li>
-        <li class="company"><a class="org" href="#instagram" data-target="instagram">Instagram</a></li>
-        <li class="company"><a class="org" href="#google" data-target="google">Google</a></li>
-        <li class="company"><a class="org" href="#frog" data-target="frog">frog</a></li>
-        <li class="company"><a class="org" href="#smart-design" data-target="smart-design">Smart Design</a></li>
-        <li class="company"><a class="org" href="#youtube-music" data-target="youtube-music">YouTube Music</a></li>
+        <li class="company"><a class="org" href="#youtube" data-target="youtube">YouTube</a><a class="out" href="https://www.youtube.com" target="_blank" rel="noopener" aria-label="Visit YouTube website" title="Visit website">↗</a></li>
+        <li class="company"><a class="org" href="#instagram" data-target="instagram">Instagram</a><a class="out" href="https://www.instagram.com" target="_blank" rel="noopener" aria-label="Visit Instagram website" title="Visit website">↗</a></li>
+        <li class="company"><a class="org" href="#google" data-target="google">Google</a><a class="out" href="https://www.google.com" target="_blank" rel="noopener" aria-label="Visit Google website" title="Visit website">↗</a></li>
+        <li class="company"><a class="org" href="#frog" data-target="frog">frog</a><a class="out" href="https://www.frog.co" target="_blank" rel="noopener" aria-label="Visit frog website" title="Visit website">↗</a></li>
+        <li class="company"><a class="org" href="#smart-design" data-target="smart-design">Smart Design</a><a class="out" href="https://smartdesignworldwide.com" target="_blank" rel="noopener" aria-label="Visit Smart Design website" title="Visit website">↗</a></li>
+        <li class="company"><a class="org" href="#youtube-music" data-target="youtube-music">YouTube Music</a><a class="out" href="https://music.youtube.com" target="_blank" rel="noopener" aria-label="Visit YouTube Music website" title="Visit website">↗</a></li>
       </ul>
     </section>
 
     <section class="group">
       <h2 class="muted">Education</h2>
       <ul class="companies">
-        <li class="company"><a class="org" href="#sva" data-target="sva">School of Visual Arts, MFA</a></li>
-        <li class="company"><a class="org" href="#syracuse" data-target="syracuse">Syracuse University</a></li>
+        <li class="company"><a class="org" href="#sva" data-target="sva">School of Visual Arts, MFA</a><a class="out" href="https://sva.edu" target="_blank" rel="noopener" aria-label="Visit School of Visual Arts website" title="Visit website">↗</a></li>
+        <li class="company"><a class="org" href="#syracuse" data-target="syracuse">Syracuse University</a><a class="out" href="https://www.syracuse.edu" target="_blank" rel="noopener" aria-label="Visit Syracuse University website" title="Visit website">↗</a></li>
       </ul>
     </section>
 
