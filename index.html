@@ -99,44 +99,6 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 .blurb { display: flex; flex-direction: column; gap: 12px; max-width: 62ch; text-wrap: pretty; }
 .blurb .lead { font-size: var(--size-lg); }
 
-.out { color: var(--muted); opacity: 0; transition: opacity .15s, color .15s; padding: 0 4px; margin: 0 -4px; }
-.company:hover .out, .out:focus-visible { opacity: 1; }
-.out:hover { color: var(--fg); }
-@media (hover: none) { .out { opacity: .6; } }
-.org.is-active { background-size: 100% 1px; background-image: linear-gradient(var(--fg), var(--fg)); }
-
-.project { display: flex; flex-direction: column; gap: 16px; scroll-margin-top: 48px; }
-.project-head { display: flex; align-items: center; gap: 12px; }
-.role-title { color: var(--muted); }
-.arrows { margin-left: auto; display: flex; gap: 8px; }
-.arrow {
-  width: 32px; height: 32px; border-radius: 50%;
-  border: 1px solid var(--rule); background: var(--bg); color: var(--fg);
-  display: grid; place-items: center; cursor: pointer; font: inherit; padding: 0;
-  transition: border-color .15s, opacity .15s;
-}
-.arrow:hover { border-color: var(--muted); }
-.arrow:disabled { opacity: .35; cursor: default; border-color: var(--rule); }
-.arrow:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
-.track {
-  display: flex; gap: 16px;
-  overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;
-  scrollbar-width: none; overscroll-behavior-x: contain;
-}
-.track::-webkit-scrollbar { display: none; }
-.card {
-  flex: 0 0 72%;
-  aspect-ratio: 4 / 3;
-  scroll-snap-align: start;
-  background: var(--tile); border-radius: 12px;
-  display: flex; align-items: flex-end; padding: 16px;
-  color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums;
-}
-.card.photo { position: relative; overflow: hidden; margin: 0; padding: 0; }
-.card.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; }
-.card.photo figcaption { position: absolute; left: 12px; bottom: 12px; font-size: 12px; padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--bg) 85%, transparent); color: var(--muted); }
-.card.photo figcaption a:hover { color: var(--fg); }
-@media (prefers-reduced-motion: reduce) { .track { scroll-behavior: auto; } }
 
 /* Phone: stack, page scrolls as a whole */
 @media (max-width: 760px) {
@@ -154,8 +116,6 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
     padding-left: max(20px, env(safe-area-inset-left, 0px));
     padding-right: max(20px, env(safe-area-inset-right, 0px));
   }
-  .card { flex-basis: 86%; }
-  .project { scroll-margin-top: 16px; }
 }
 </style>
 </head>
@@ -171,20 +131,20 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
     <section class="group">
       <h2 class="muted">Work</h2>
       <ul class="companies">
-        <li class="company"><a class="org" href="#youtube" data-target="youtube">YouTube</a><a class="out" href="https://www.youtube.com" target="_blank" rel="noopener" aria-label="Visit YouTube website" title="Visit website">↗</a></li>
-        <li class="company"><a class="org" href="#instagram" data-target="instagram">Instagram</a><a class="out" href="https://www.instagram.com" target="_blank" rel="noopener" aria-label="Visit Instagram website" title="Visit website">↗</a></li>
-        <li class="company"><a class="org" href="#google" data-target="google">Google</a><a class="out" href="https://www.google.com" target="_blank" rel="noopener" aria-label="Visit Google website" title="Visit website">↗</a></li>
-        <li class="company"><a class="org" href="#frog" data-target="frog">frog</a><a class="out" href="https://www.frog.co" target="_blank" rel="noopener" aria-label="Visit frog website" title="Visit website">↗</a></li>
-        <li class="company"><a class="org" href="#smart-design" data-target="smart-design">Smart Design</a><a class="out" href="https://smartdesignworldwide.com" target="_blank" rel="noopener" aria-label="Visit Smart Design website" title="Visit website">↗</a></li>
-        <li class="company"><a class="org" href="#youtube-music" data-target="youtube-music">YouTube Music</a><a class="out" href="https://music.youtube.com" target="_blank" rel="noopener" aria-label="Visit YouTube Music website" title="Visit website">↗</a></li>
+        <li class="company"><a class="org" href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a></li>
+        <li class="company"><a class="org" href="https://www.instagram.com" target="_blank" rel="noopener">Instagram</a></li>
+        <li class="company"><a class="org" href="https://www.google.com" target="_blank" rel="noopener">Google</a></li>
+        <li class="company"><a class="org" href="https://www.frog.co" target="_blank" rel="noopener">frog</a></li>
+        <li class="company"><a class="org" href="https://smartdesignworldwide.com" target="_blank" rel="noopener">Smart Design</a></li>
+        <li class="company"><a class="org" href="https://music.youtube.com" target="_blank" rel="noopener">YouTube Music</a></li>
       </ul>
     </section>
 
     <section class="group">
       <h2 class="muted">Education</h2>
       <ul class="companies">
-        <li class="company"><a class="org" href="#sva" data-target="sva">School of Visual Arts, MFA</a><a class="out" href="https://sva.edu" target="_blank" rel="noopener" aria-label="Visit School of Visual Arts website" title="Visit website">↗</a></li>
-        <li class="company"><a class="org" href="#syracuse" data-target="syracuse">Syracuse University</a><a class="out" href="https://www.syracuse.edu" target="_blank" rel="noopener" aria-label="Visit Syracuse University website" title="Visit website">↗</a></li>
+        <li class="company"><a class="org" href="https://sva.edu" target="_blank" rel="noopener">School of Visual Arts, MFA</a></li>
+        <li class="company"><a class="org" href="https://www.syracuse.edu" target="_blank" rel="noopener">Syracuse University</a></li>
       </ul>
     </section>
 
@@ -199,112 +159,6 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
       <section class="blurb">
         <p>I took the long way into product design. I started out designing furniture, which taught me to care about how things feel to use, then moved through agencies like frog and Smart Design and in-house teams at Google and Instagram.</p>
         <p>Today I lead a UX team at YouTube focused on creators, from AI provenance to helping them reach audiences in any language. It's work without obvious answers or a single owner, so I spend much of my time with product, engineering, research and policy, turning ambiguity into direction. I stay close to the craft, and I care just as much about growing the designers on my team.</p>
-      </section>
-
-      <section class="project" id="youtube" aria-label="YouTube">
-        <div class="project-head">
-          <h2>YouTube</h2>
-          <div class="arrows">
-            <button class="arrow" type="button" data-dir="-1" aria-label="Previous YouTube image">‹</button>
-            <button class="arrow" type="button" data-dir="1" aria-label="Next YouTube image">›</button>
-          </div>
-        </div>
-        <div class="track">
-          <figure class="card photo" role="group" aria-label="YouTube video with the How this was made AI label pop-out"><img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/en_HowThisWasMade_WithPopout.max-1440x810.png" alt="YouTube video with the How this was made AI label pop-out" loading="lazy" onerror="this.remove()"><figcaption><a href="https://blog.youtube/news-and-events/improving-ai-labels-viewers-creators/" target="_blank" rel="noopener">AI labels, 2026 · Image: YouTube</a></figcaption></figure>
-          <figure class="card photo" role="group" aria-label="Cover of YouTube video on simplified AI labels and auto-detection"><img src="https://i.ytimg.com/vi_webp/r99O5TAKM1E/maxresdefault.webp" alt="Cover of YouTube video on simplified AI labels and auto-detection" loading="lazy" onerror="this.remove()"><figcaption><a href="https://www.youtube.com/watch?v=r99O5TAKM1E" target="_blank" rel="noopener">AI labels explainer · Watch ↗ · Image: YouTube</a></figcaption></figure>
-          <figure class="card photo" role="group" aria-label="AI disclosure question in YouTube Studio upload flow"><img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/blog-gtm-web-disclosure_2x.max-1440x810.format-webp.webp" alt="AI disclosure question in YouTube Studio upload flow" loading="lazy" onerror="this.remove()"><figcaption><a href="https://blog.youtube/news-and-events/disclosing-ai-generated-content" target="_blank" rel="noopener">Creator disclosure, 2024 · Image: YouTube</a></figcaption></figure>
-          <figure class="card photo" role="group" aria-label="AI label on the YouTube Shorts player"><img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/blog-gtm-shorts_2x_1.max-1440x810.format-webp.webp" alt="AI label on the YouTube Shorts player" loading="lazy" onerror="this.remove()"><figcaption><a href="https://blog.youtube/news-and-events/disclosing-ai-generated-content" target="_blank" rel="noopener">Label on Shorts, 2024 · Image: YouTube</a></figcaption></figure>
-          <figure class="card photo" role="group" aria-label="AI label in the expanded video description"><img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/blog-gtm_sd_2x_1.max-1440x810.format-webp.webp" alt="AI label in the expanded video description" loading="lazy" onerror="this.remove()"><figcaption><a href="https://blog.youtube/news-and-events/disclosing-ai-generated-content" target="_blank" rel="noopener">Label in description, 2024 · Image: YouTube</a></figcaption></figure>
-        </div>
-      </section>
-
-      <section class="project" id="instagram" aria-label="Instagram">
-        <div class="project-head">
-          <h2>Instagram</h2>
-          <div class="arrows">
-            <button class="arrow" type="button" data-dir="-1" aria-label="Previous Instagram image">‹</button>
-            <button class="arrow" type="button" data-dir="1" aria-label="Next Instagram image">›</button>
-          </div>
-        </div>
-        <div class="track">
-          <figure class="card photo" role="group" aria-label="Product mocks of Family Center in Instagram"><img src="https://about.fb.com/wp-content/uploads/2022/03/Introducing-Family-Center-and-Parental-Supervision-Tools-on-IG-and-VR_Inline_01.jpg" alt="Product mocks of Family Center in Instagram" loading="lazy" onerror="this.remove()"><figcaption><a href="https://about.fb.com/news/2022/03/parental-supervision-tools-instagram-vr/" target="_blank" rel="noopener">Family Center, 2022 · Image: Meta</a></figcaption></figure>
-          <figure class="card photo" role="group" aria-label="Two phone screens showing stricter default message settings for teens"><img src="https://about.fb.com/wp-content/uploads/2024/01/01_Reachability-Default-Meta.jpg" alt="Two phone screens showing stricter default message settings for teens" loading="lazy" onerror="this.remove()"><figcaption><a href="https://about.fb.com/news/2024/01/introducing-stricter-message-settings-for-teens-on-instagram-and-facebook/" target="_blank" rel="noopener">Teen DM defaults, 2024 · Image: Meta</a></figcaption></figure>
-        </div>
-      </section>
-
-      <section class="project" id="google" aria-label="Google">
-        <div class="project-head">
-          <h2>Google</h2>
-          <div class="arrows">
-            <button class="arrow" type="button" data-dir="-1" aria-label="Previous Google image">‹</button>
-            <button class="arrow" type="button" data-dir="1" aria-label="Next Google image">›</button>
-          </div>
-        </div>
-        <div class="track">
-          <figure class="card photo" role="group" aria-label="Audience Q&amp;A in Google Slides"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjqtk22scr_K9o6GaGDiX6cIMUnmcZ4DNz7D-fm9jzgZaf5Ql50KGIE5jigznraMd2MqK7zYJjHyt5x4cdtSTJ6Unjb70K5MjOcoMjE67LOxU9V8WWbLxUg_fFCDMXSgFddZS-xYlf8DVU/s1600/Q%2526A.png" alt="Audience Q&amp;A in Google Slides" loading="lazy" onerror="this.remove()"><figcaption><a href="https://workspaceupdates.googleblog.com/2016/05/accept-questions-from-your-audience.html" target="_blank" rel="noopener">Slides Q&amp;A, 2016 · Image: Google</a></figcaption></figure>
-          <figure class="card photo" role="group" aria-label="Image editing in the Google Docs mobile app"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjFQYO9b38gBdbnyIrGttaDw8X5nVAi6dVrum3UlHU0YRxS_4DIbRNxRoAyuqZhE_vOKZl9e2JT9KN0WZph5eG3c65FqQhVnPxFXk6BBd7jwkUwkKidnC513UkYFzjQf7SXRoFPEk3mOFw/s1600/Image+Manipulation.jpg" alt="Image editing in the Google Docs mobile app" loading="lazy" onerror="this.remove()"><figcaption><a href="https://workspaceupdates.googleblog.com/2017/01/new-features-for-your-google-docs-and.html" target="_blank" rel="noopener">Docs mobile image editing, 2017 · Image: Google</a></figcaption></figure>
-          <figure class="card photo" role="group" aria-label="Page setup in Google Docs for iOS"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj4qNtngraq5UkYPuB-ffdDnngsxUNW_NZA1HSxdzh_LavkiG-fzYIhyphenhyphenjbbVFdDo5JRKwArfesJ0ZSpq4q4k-uEk-5VMr_Hu9m_l3YB706zjTA_Zl4CWMorlXj1Qij0Xezcv9zM1pVqji0/s1600/iOS+Page+Setup+2.png" alt="Page setup in Google Docs for iOS" loading="lazy" onerror="this.remove()"><figcaption><a href="https://workspaceupdates.googleblog.com/2017/01/new-features-for-your-google-docs-and.html" target="_blank" rel="noopener">Docs page setup on iOS, 2017 · Image: Google</a></figcaption></figure>
-          <figure class="card photo" role="group" aria-label="Grammar suggestions in Google Docs"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg69IaLFmfUj9PCNxX_DM-whpAincJQsBT9c_EOPc4rMbOZwQSKKFj6Pja35Sv0-p2DCH-eclgcIKp-mzXbHanpN7Pf8if5_8EGbqC6Sr9YiRzPGPvfd2psNADA5cq-vdCJ8Xr1UTfwpUM/s1600/Spelling-grammar-1280x720.gif" alt="Grammar suggestions in Google Docs" loading="lazy" onerror="this.remove()"><figcaption><a href="https://workspaceupdates.googleblog.com/2018/07/new-grammar-suggestions-in-google-docs.html" target="_blank" rel="noopener">Docs grammar suggestions, 2018 · Image: Google</a></figcaption></figure>
-          <figure class="card photo" role="group" aria-label="Assistive features in G Suite"><img src="https://storage.googleapis.com/gweb-cloudblog-publish/images/gsuite_assist_2.max-2600x2600.jpg" alt="Assistive features in G Suite" loading="lazy" onerror="this.remove()"><figcaption><a href="https://workspace.google.com/blog/product-announcements/introducing-new-assistive-features-in-gsuite" target="_blank" rel="noopener">G Suite assistive features, 2019 · Image: Google</a></figcaption></figure>
-        </div>
-      </section>
-
-      <section class="project" id="frog" aria-label="frog">
-        <div class="project-head">
-          <h2>frog</h2>
-          <div class="arrows">
-            <button class="arrow" type="button" data-dir="-1" aria-label="Previous frog image">‹</button>
-            <button class="arrow" type="button" data-dir="1" aria-label="Next frog image">›</button>
-          </div>
-        </div>
-        <div class="track">
-          <div class="card" role="group" aria-label="frog image 1 of 3">1 / 3</div>
-          <div class="card" role="group" aria-label="frog image 2 of 3">2 / 3</div>
-          <div class="card" role="group" aria-label="frog image 3 of 3">3 / 3</div>
-        </div>
-      </section>
-
-      <section class="project" id="smart-design" aria-label="Smart Design">
-        <div class="project-head">
-          <h2>Smart Design</h2>
-          <div class="arrows">
-            <button class="arrow" type="button" data-dir="-1" aria-label="Previous Smart Design image">‹</button>
-            <button class="arrow" type="button" data-dir="1" aria-label="Next Smart Design image">›</button>
-          </div>
-        </div>
-        <div class="track">
-          <div class="card" role="group" aria-label="Smart Design image 1 of 3">1 / 3</div>
-          <div class="card" role="group" aria-label="Smart Design image 2 of 3">2 / 3</div>
-          <div class="card" role="group" aria-label="Smart Design image 3 of 3">3 / 3</div>
-        </div>
-      </section>
-
-      <section class="project" id="youtube-music" aria-label="YouTube Music">
-        <div class="project-head">
-          <h2>YouTube Music</h2>
-          <div class="arrows">
-            <button class="arrow" type="button" data-dir="-1" aria-label="Previous YouTube Music image">‹</button>
-            <button class="arrow" type="button" data-dir="1" aria-label="Next YouTube Music image">›</button>
-          </div>
-        </div>
-        <div class="track">
-          <div class="card" role="group" aria-label="YouTube Music image 1 of 2">1 / 2</div>
-          <div class="card" role="group" aria-label="YouTube Music image 2 of 2">2 / 2</div>
-        </div>
-      </section>
-
-      <section class="project" id="sva" aria-label="School of Visual Arts">
-        <div class="project-head">
-          <h2>School of Visual Arts</h2>
-          <span class="role-title">MFA</span>
-        </div>
-      </section>
-
-      <section class="project" id="syracuse" aria-label="Syracuse University">
-        <div class="project-head">
-          <h2>Syracuse University</h2>
-          <span class="role-title">Bachelor of Industrial Design</span>
-        </div>
       </section>
     </div>
   </main>
@@ -392,60 +246,5 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 })();
 </script>
 
-<script>
-(function () {
-  var feed = document.querySelector('.feed');
-  var links = Array.prototype.slice.call(document.querySelectorAll('.org[data-target]'));
-  var sections = Array.prototype.slice.call(document.querySelectorAll('.project'));
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function go(id, smooth) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    el.scrollIntoView({ behavior: smooth && !reduce ? 'smooth' : 'auto', block: 'start' });
-  }
-  links.forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      e.preventDefault();
-      var id = a.getAttribute('data-target');
-      go(id, true);
-      try { history.replaceState(null, '', '#' + id); } catch (err) {}
-    });
-  });
-
-  function setActive() {
-    var line = window.innerHeight * 0.35, current = null;
-    sections.forEach(function (sec) { if (sec.getBoundingClientRect().top <= line) current = sec.id; });
-    links.forEach(function (a) { a.classList.toggle('is-active', a.getAttribute('data-target') === current); });
-  }
-  feed.addEventListener('scroll', setActive, { passive: true });
-  window.addEventListener('scroll', setActive, { passive: true });
-  window.addEventListener('resize', setActive);
-
-  sections.forEach(function (sec) {
-    var track = sec.querySelector('.track');
-    var prev = sec.querySelector('[data-dir="-1"]'), next = sec.querySelector('[data-dir="1"]');
-    function update() {
-      var max = track.scrollWidth - track.clientWidth - 2;
-      prev.disabled = track.scrollLeft <= 2;
-      next.disabled = track.scrollLeft >= max;
-    }
-    function step(dir) {
-      var card = track.querySelector('.card');
-      var w = card ? card.getBoundingClientRect().width + 16 : track.clientWidth;
-      track.scrollBy({ left: dir * w, behavior: reduce ? 'auto' : 'smooth' });
-    }
-    prev.addEventListener('click', function () { step(-1); });
-    next.addEventListener('click', function () { step(1); });
-    track.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
-    update();
-  });
-
-  var start = (location.hash || '').slice(1);
-  if (start && document.getElementById(start)) go(start, false);
-  setActive();
-})();
-</script>
 </body>
 </html>
