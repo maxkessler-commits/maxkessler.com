@@ -79,6 +79,17 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 }
 .org:hover, .org:focus-visible { background-size: 100% 1px; }
 @media (prefers-reduced-motion: reduce) { .org { transition: none; } }
+.has-projects { flex-direction: column; align-items: flex-start; gap: 0; }
+.toggle { border: 0; padding: 0 0 2px; margin: 0; font: inherit; color: inherit; background-color: transparent; cursor: pointer; text-align: left; }
+.toggle:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radius: 2px; }
+.toggle[aria-expanded="true"] { background-size: 100% 1px; }
+.projects-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; width: 100%; }
+.projects-wrap.open { grid-template-rows: 1fr; }
+.projects { overflow: hidden; min-height: 0; list-style: none; margin: 0; padding: 0 0 0 16px; display: flex; flex-direction: column; gap: 10px; color: var(--muted); }
+.projects-wrap.open .projects { padding-top: 10px; }
+.projects .org:hover { color: var(--fg); }
+@media (prefers-reduced-motion: reduce) { .projects-wrap { transition: none; } }
+
 .rail-foot { margin-top: auto; display: flex; flex-direction: row; gap: 16px; color: var(--muted); }
 .rail-foot { align-items: center; }
 .clock { font-variant-numeric: tabular-nums; }
@@ -129,22 +140,44 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
     </header>
 
     <section class="group">
-      <h2 class="muted">Work</h2>
       <ul class="companies">
-        <li class="company"><a class="org" href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a></li>
-        <li class="company"><a class="org" href="https://www.instagram.com" target="_blank" rel="noopener">Instagram</a></li>
-        <li class="company"><a class="org" href="https://www.google.com" target="_blank" rel="noopener">Google</a></li>
-        <li class="company"><a class="org" href="https://www.frog.co" target="_blank" rel="noopener">frog</a></li>
-        <li class="company"><a class="org" href="https://smartdesignworldwide.com" target="_blank" rel="noopener">Smart Design</a></li>
-        <li class="company"><a class="org" href="https://music.youtube.com" target="_blank" rel="noopener">YouTube Music</a></li>
+        <li class="company has-projects">
+          <button class="org toggle" type="button" aria-expanded="false" aria-controls="p-youtube">YouTube</button>
+          <div class="projects-wrap" id="p-youtube">
+            <ul class="projects">
+              <li><a class="org" href="https://support.google.com/youtube/answer/14328491" target="_blank" rel="noopener">AI Transparency</a></li>
+              <li><a class="org" href="https://support.google.com/youtube/answer/15446725" target="_blank" rel="noopener">Google C2PA Provenance</a></li>
+              <li><a class="org" href="https://support.google.com/youtube/answer/13338784" target="_blank" rel="noopener">Language Experiences</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="company has-projects">
+          <button class="org toggle" type="button" aria-expanded="false" aria-controls="p-instagram">Instagram</button>
+          <div class="projects-wrap" id="p-instagram">
+            <ul class="projects">
+              <li><a class="org" href="https://www.meta.com/help/supervision/1188730949899410/" target="_blank" rel="noopener">Family Center</a></li>
+              <li><a class="org" href="https://help.instagram.com/3237561506542117" target="_blank" rel="noopener">DMing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="company has-projects">
+          <button class="org toggle" type="button" aria-expanded="false" aria-controls="p-google">Google</button>
+          <div class="projects-wrap" id="p-google">
+            <ul class="projects">
+              <li><a class="org" href="https://support.google.com/docs/answer/10710316" target="_blank" rel="noopener">Link Previews</a></li>
+              <li><a class="org" href="https://workspaceupdates.googleblog.com/2020/06/new-comment-interface-android-google-docs-sheets-slides.html" target="_blank" rel="noopener">Commenting</a></li>
+            </ul>
+          </div>
+        </li>
       </ul>
     </section>
 
     <section class="group">
-      <h2 class="muted">Education</h2>
+      <h2 class="muted">Internships</h2>
       <ul class="companies">
-        <li class="company"><a class="org" href="https://sva.edu" target="_blank" rel="noopener">School of Visual Arts, MFA</a></li>
-        <li class="company"><a class="org" href="https://www.syracuse.edu" target="_blank" rel="noopener">Syracuse University</a></li>
+        <li class="company"><a class="org" href="https://www.frog.co" target="_blank" rel="noopener">frog</a></li>
+        <li class="company"><a class="org" href="https://smartdesignworldwide.com" target="_blank" rel="noopener">Smart Design</a></li>
+        <li class="company"><a class="org" href="https://music.youtube.com" target="_blank" rel="noopener">YouTube Music</a></li>
       </ul>
     </section>
 
@@ -246,5 +279,20 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 })();
 </script>
 
+<script>
+(function () {
+  document.querySelectorAll('.toggle').forEach(function (btn) {
+    var panel = document.getElementById(btn.getAttribute('aria-controls'));
+    if (!panel) return;
+    panel.querySelectorAll('a').forEach(function (a) { a.tabIndex = -1; });
+    btn.addEventListener('click', function () {
+      var open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', String(open));
+      panel.classList.toggle('open', open);
+      panel.querySelectorAll('a').forEach(function (a) { a.tabIndex = open ? 0 : -1; });
+    });
+  });
+})();
+</script>
 </body>
 </html>
