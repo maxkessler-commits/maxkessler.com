@@ -91,13 +91,39 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 @media (prefers-reduced-motion: reduce) { .projects-wrap { transition: none; } }
 
 .rail-foot { margin-top: auto; display: flex; flex-direction: row; gap: 16px; color: var(--muted); }
-.rail-foot { align-items: center; }
+.rail-foot { align-items: center; flex-wrap: wrap; row-gap: 10px; column-gap: 14px; }
+.where { white-space: nowrap; }
 .clock { font-variant-numeric: tabular-nums; }
 .colon { animation: blink 1s steps(1, end) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .colon { animation: none; } }
 .icon-link { display: inline-flex; padding: 4px; margin: -4px; border-radius: 4px; transition: color .15s; }
 .icon-link:hover { color: var(--fg); }
+
+/* Side projects entry: the one hand-drawn mark on the page, echoing the doodles on projects.maxkessler.com */
+.side { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.side svg { overflow: visible; }
+.side .plane { fill: transparent; transition: fill .3s ease; }
+.side { position: relative; }
+.side .label {
+  position: absolute; left: 50%; bottom: calc(100% + 6px);
+  transform: translate(-50%, 4px);
+  white-space: nowrap; pointer-events: none;
+  opacity: 0; transition: opacity .2s ease, transform .25s ease;
+}
+.side:hover, .side:focus-visible { color: var(--fg); }
+.side:hover .label, .side:focus-visible .label { opacity: 1; transform: translate(-50%, 0); }
+.side:hover .plane, .side:focus-visible .plane { fill: #F2643D; }
+.side:hover .stroke, .side:focus-visible .stroke { animation: redraw .7s cubic-bezier(.6,.1,.3,1); }
+.side:hover svg, .side:focus-visible svg { transform: translate(1px, -1px) rotate(-6deg); }
+.side svg { transition: transform .35s ease; }
+@keyframes redraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.side .stroke { stroke-dasharray: 1; stroke-dashoffset: 0; }
+@media (hover: none) { .side .label { position: static; transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .side .stroke { animation: none !important; }
+  .side svg, .side .label { transition: none; }
+}
 
 /* Right */
 .feed {
@@ -184,6 +210,7 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 
     <nav class="rail-foot" aria-label="Contact">
       <a class="icon-link" href="mailto:maxhkessler@gmail.com" aria-label="Email Max" title="Email"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg></a>
+      <a class="icon-link side" href="https://projects.maxkessler.com" aria-label="Side projects" title="Side projects"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="plane stroke" pathLength="1" d="M2.6 11.2 C 8 8.6, 15 5.4, 21.2 2.9 C 19.9 9, 18.4 15, 16.6 20.8 C 14.6 18.6, 12.6 16.4, 10.3 14.4 C 7.8 13.4, 5.2 12.3, 2.6 11.2 Z"/><path class="stroke" pathLength="1" d="M10.3 14.4 C 13.8 10.6, 17.4 6.6, 21.1 3.1 M10.4 14.5 C 10.2 16.6, 10.1 18.8, 10.2 21 C 11.3 19.8, 12.4 18.6, 13.4 17.4"/></svg><span class="label">Side projects</span></a>
       <span class="where">Based in New York · <span class="clock" id="nyc" aria-label="Current time in New York"><span id="nyc-h">12</span><span class="colon">:</span><span id="nyc-m">00</span> <span id="nyc-ap">PM</span></span></span>
     </nav>
   </aside>
