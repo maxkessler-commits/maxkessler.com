@@ -101,12 +101,21 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 .icon-link:hover { color: var(--fg); }
 
 /* Side projects: the arrow takes a scenic route, then the page dissolves */
-.side { display: inline-flex; align-items: baseline; gap: 6px; }
-.side .arr { display: inline-block; color: var(--muted); transition: transform .2s ease, color .2s; }
-.side:hover .arr, .side:focus-visible .arr { transform: translate(2px, -2px); color: var(--fg); }
-.side.flying .arr { visibility: hidden; }
-.flyer { position: fixed; left: 0; top: 0; z-index: 20; pointer-events: none; color: var(--fg); font: inherit; line-height: 1; will-change: transform; }
-.veil { position: fixed; inset: 0; z-index: 19; background: var(--bg); opacity: 0; pointer-events: none; transition: opacity .55s ease; }
+.side { display: inline-flex; align-items: center; gap: 6px; }
+.side .plane-ico { overflow: visible; color: var(--muted); transition: transform .35s ease, color .2s; }
+.side .plane { fill: transparent; transition: fill .3s ease; }
+.side .stroke { stroke-dasharray: 1; stroke-dashoffset: 0; }
+.side:hover .plane-ico, .side:focus-visible .plane-ico { color: var(--fg); transform: translate(1px, -1px) rotate(-6deg); }
+.side:hover .plane, .side:focus-visible .plane { fill: #F2643D; }
+.side:hover .stroke, .side:focus-visible .stroke { animation: redraw .7s cubic-bezier(.6,.1,.3,1); }
+@keyframes redraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.side.flying .plane-ico { visibility: hidden; }
+.flyer .plane { fill: #F2643D; }
+.trail { position: fixed; inset: 0; z-index: 19; pointer-events: none; overflow: visible; }
+.trail path { fill: none; stroke: #F2643D; stroke-width: 1.5; stroke-linecap: round; stroke-dasharray: 2 7; opacity: .7; }
+@media (prefers-reduced-motion: reduce) { .side .stroke { animation: none !important; } .side .plane-ico { transition: none; } }
+.flyer { position: fixed; left: 0; top: 0; z-index: 20; pointer-events: none; color: var(--fg); overflow: visible; will-change: transform; }
+.veil { position: fixed; inset: 0; z-index: 21; background: var(--bg); opacity: 0; pointer-events: none; transition: opacity .55s ease; }
 .veil.on { opacity: 1; pointer-events: auto; }
 
 /* Right */
@@ -189,7 +198,7 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
             </ul>
           </div>
         </li>
-        <li class="company"><a class="org side" href="https://projects.maxkessler.com">Side projects <span class="arr" aria-hidden="true">↗</span></a></li>
+        <li class="company"><a class="org side" href="https://projects.maxkessler.com">Side projects <svg class="plane-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="plane stroke" pathLength="1" d="M2.6 11.2 C 8 8.6, 15 5.4, 21.2 2.9 C 19.9 9, 18.4 15, 16.6 20.8 C 14.6 18.6, 12.6 16.4, 10.3 14.4 C 7.8 13.4, 5.2 12.3, 2.6 11.2 Z"/><path class="stroke" pathLength="1" d="M10.3 14.4 C 13.8 10.6, 17.4 6.6, 21.1 3.1 M10.4 14.5 C 10.2 16.6, 10.1 18.8, 10.2 21 C 11.3 19.8, 12.4 18.6, 13.4 17.4"/></svg></a></li>
       </ul>
     </section>
 
@@ -319,7 +328,7 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 (function () {
   var link = document.querySelector('.side'), veil = document.querySelector('.veil');
   if (!link || !veil) return;
-  var arrow = link.querySelector('.arr');
+  var arrow = link.querySelector('.plane-ico');
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var busy = false;
 
@@ -374,8 +383,8 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
     return frames.map(function (f, idx) {
       var next = frames[Math.min(idx + 1, frames.length - 1)], prev = frames[Math.max(idx - 1, 0)];
       var ang = Math.atan2(next[1] - prev[1], next[0] - prev[0]) * 180 / Math.PI + 45; // the glyph points up-right
-      var scale = 1 + Math.sin(idx / frames.length * Math.PI) * 1.6;
-      return { transform: 'translate(' + f[0] + 'px,' + f[1] + 'px) rotate(' + ang + 'deg) scale(' + scale + ')' };
+      var scale = 1 + Math.sin(idx / frames.length * Math.PI) * 1.2;
+      return { x: f[0], y: f[1], transform: 'translate(' + f[0] + 'px,' + f[1] + 'px) rotate(' + ang + 'deg) scale(' + scale + ')' };
     });
   }
 
@@ -389,20 +398,36 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
     var href = link.href;
     if (reduce || !arrow || !document.body.animate) { go(href); return; }
     var r = arrow.getBoundingClientRect();
-    var fly = document.createElement('span');
-    fly.className = 'flyer'; fly.textContent = '↗'; fly.setAttribute('aria-hidden', 'true');
+    var fly = arrow.cloneNode(true);
+    fly.setAttribute('class', 'flyer'); fly.style.width = r.width + 'px'; fly.style.height = r.height + 'px';
     document.body.appendChild(fly);
     link.classList.add('flying');
-    var frames = keyframes(route(r.left, r.top, window.innerWidth, window.innerHeight));
-    var anim = fly.animate(frames, { duration: rnd(1500, 2100), easing: 'cubic-bezier(.45,0,.25,1)', fill: 'forwards' });
-    setTimeout(function () { veil.classList.add('on'); }, 900);
+    var pts = route(r.left, r.top, window.innerWidth, window.innerHeight);
+    var frames = keyframes(pts);
+    var dur = rnd(1700, 2300), ease = 'cubic-bezier(.45,0,.25,1)';
+    // dotted trail drawn behind the plane
+    var ns = 'http://www.w3.org/2000/svg', trail = document.createElementNS(ns, 'svg'), tp = document.createElementNS(ns, 'path');
+    trail.setAttribute('class', 'trail'); trail.setAttribute('width', window.innerWidth); trail.setAttribute('height', window.innerHeight);
+    trail.appendChild(tp); document.body.appendChild(trail);
+    var anim = fly.animate(frames.map(function (f) { return { transform: f.transform }; }), { duration: dur, easing: ease, fill: 'forwards' });
+    // grow the dotted trail behind the plane as it flies
+    var cx = r.width / 2, cy = r.height / 2;
+    (function draw() {
+      var p = anim.effect.getComputedTiming().progress;
+      if (p == null) p = 1;
+      var n = Math.max(1, Math.round(p * (frames.length - 1)));
+      var d = 'M' + frames.slice(0, n + 1).map(function (f) { return (f.x + cx).toFixed(1) + ' ' + (f.y + cy).toFixed(1); }).join(' L');
+      tp.setAttribute('d', d);
+      if (p < 1) requestAnimationFrame(draw);
+    })();
+    setTimeout(function () { veil.classList.add('on'); }, dur * 0.6);
     anim.onfinish = function () { window.location.href = href; };
   });
 
   // Coming back via the back button: clear the veil and reset.
   window.addEventListener('pageshow', function () {
     busy = false; veil.classList.remove('on'); link.classList.remove('flying');
-    document.querySelectorAll('.flyer').forEach(function (f) { f.remove(); });
+    document.querySelectorAll('.flyer, .trail').forEach(function (f) { f.remove(); });
   });
 })();
 </script>
