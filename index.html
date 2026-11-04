@@ -100,26 +100,14 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 .icon-link { display: inline-flex; padding: 4px; margin: -4px; border-radius: 4px; transition: color .15s; }
 .icon-link:hover { color: var(--fg); }
 
-/* Side projects entry: a dog-eared page corner that flutters; tap it to turn the page */
-.site { position: relative; z-index: 1; background: var(--bg); }
-.under { position: fixed; inset: 0; z-index: 0; background: #FFFEFD; }
-.under iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; opacity: 0; transition: opacity .2s; }
-.under iframe.ready { opacity: 1; }
-.curl { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; overflow: visible; }
-.curl .s0 { stop-color: #000; stop-opacity: .16; } .curl .s1 { stop-color: #000; stop-opacity: 0; }
-.curl .f0 { stop-color: #e4e3df; } .curl .f1 { stop-color: #f8f7f4; } .curl .f2 { stop-color: #ecebe7; }
-:root[data-theme="dark"] .curl .f0 { stop-color: #18191b; } :root[data-theme="dark"] .curl .f1 { stop-color: #2b2d31; } :root[data-theme="dark"] .curl .f2 { stop-color: #222428; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .curl .f0 { stop-color: #18191b; }
-  :root:not([data-theme="light"]) .curl .f1 { stop-color: #2b2d31; }
-  :root:not([data-theme="light"]) .curl .f2 { stop-color: #222428; }
-}
-.corner {
-  position: fixed; right: 0; bottom: 0; z-index: 3; width: 104px; height: 104px;
-  clip-path: polygon(100% 0, 100% 100%, 0 100%); -webkit-tap-highlight-color: transparent;
-}
-.corner:focus-visible { outline: none; }
-@media (max-width: 760px) { .site { min-height: 100vh; } .corner { width: 88px; height: 88px; } }
+/* Side projects: the arrow takes a scenic route, then the page dissolves */
+.side { display: inline-flex; align-items: baseline; gap: 6px; }
+.side .arr { display: inline-block; color: var(--muted); transition: transform .2s ease, color .2s; }
+.side:hover .arr, .side:focus-visible .arr { transform: translate(2px, -2px); color: var(--fg); }
+.side.flying .arr { visibility: hidden; }
+.flyer { position: fixed; left: 0; top: 0; z-index: 20; pointer-events: none; color: var(--fg); font: inherit; line-height: 1; will-change: transform; }
+.veil { position: fixed; inset: 0; z-index: 19; background: var(--bg); opacity: 0; pointer-events: none; transition: opacity .55s ease; }
+.veil.on { opacity: 1; pointer-events: auto; }
 
 /* Right */
 .feed {
@@ -201,6 +189,7 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
             </ul>
           </div>
         </li>
+        <li class="company"><a class="org side" href="https://projects.maxkessler.com">Side projects <span class="arr" aria-hidden="true">↗</span></a></li>
       </ul>
     </section>
 
@@ -220,17 +209,7 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
   </main>
 </div>
 
-<div class="under" aria-hidden="true"></div>
-<svg class="curl" aria-hidden="true">
-  <defs>
-    <linearGradient id="curl-shade" gradientUnits="userSpaceOnUse"><stop class="s0" offset="0"/><stop class="s1" offset="1"/></linearGradient>
-    <linearGradient id="curl-flap" gradientUnits="userSpaceOnUse"><stop class="f0" offset="0"/><stop class="f1" offset=".4"/><stop class="f2" offset="1"/></linearGradient>
-    <filter id="curl-drop" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="-1.5" dy="-1.5" stdDeviation="2.5" flood-color="#000" flood-opacity=".14"/></filter>
-  </defs>
-  <path class="shade" fill="url(#curl-shade)"/>
-  <path class="flap" fill="url(#curl-flap)" filter="url(#curl-drop)"/>
-</svg>
-<a class="corner" href="https://projects.maxkessler.com" aria-label="Side projects" title="Side projects"></a>
+<div class="veil" aria-hidden="true"></div>
 
 <script>
 (function () {
@@ -338,107 +317,92 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 
 <script>
 (function () {
-  var site = document.querySelector('.site'), under = document.querySelector('.under');
-  var link = document.querySelector('.corner'), svg = document.querySelector('.curl');
-  if (!site || !link || !svg) return;
-  var flap = svg.querySelector('.flap'), shade = svg.querySelector('.shade');
-  var gF = document.getElementById('curl-flap'), gS = document.getElementById('curl-shade');
+  var link = document.querySelector('.side'), veil = document.querySelector('.veil');
+  if (!link || !veil) return;
+  var arrow = link.querySelector('.arr');
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var href = link.href, frame = null, turning = null, lift = 0, liftTo = 0;
+  var busy = false;
 
-  // The next page (projects) sits underneath, so turning the page really reveals it
-  function loadUnder() {
-    if (frame) return;
-    frame = document.createElement('iframe');
-    frame.src = href; frame.tabIndex = -1; frame.title = 'Side projects';
-    frame.setAttribute('loading', 'eager');
-    frame.onload = function () { frame.classList.add('ready'); };
-    under.appendChild(frame);
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
+  function bez(p0, p1, p2, p3, t) {
+    var u = 1 - t;
+    return u*u*u*p0 + 3*u*u*t*p1 + 3*u*t*t*p2 + t*t*t*p3;
   }
-  window.addEventListener('load', function () { setTimeout(loadUnder, 1200); });
 
-  function size() { var e = document.documentElement; return { W: e.clientWidth, H: e.clientHeight }; }
-  function pts(a) { return a.map(function (p) { return p.x.toFixed(1) + ' ' + p.y.toFixed(1); }); }
+  // A few kinds of whimsical routes, each a chain of points the arrow visits.
+  function route(x, y, W, H) {
+    var kind = pick(['loops', 'zigzag', 'orbit', 'bounce', 'wander']);
+    var pts = [[x, y]];
+    if (kind === 'loops') {
+      var cx = x + rnd(60, 160), cy = y - rnd(40, 120);
+      for (var i = 0; i < 3; i++) {
+        var r = rnd(40, 90);
+        cx += rnd(80, 180); cy += rnd(-90, 60);
+        for (var a = 0; a <= 1; a += 0.25) pts.push([cx + Math.cos(a * Math.PI * 2 + Math.PI) * r, cy + Math.sin(a * Math.PI * 2 + Math.PI) * r]);
+      }
+    } else if (kind === 'zigzag') {
+      var n = 6 + Math.floor(rnd(0, 4)), cx = x;
+      for (var j = 0; j < n; j++) { cx += W / (n + 1); pts.push([cx, j % 2 ? rnd(H * .15, H * .35) : rnd(H * .6, H * .85)]); }
+    } else if (kind === 'orbit') {
+      var ox = W * rnd(.4, .6), oy = H * rnd(.4, .6), R = Math.min(W, H) * rnd(.22, .34);
+      var start = Math.atan2(y - oy, x - ox);
+      for (var k = 1; k <= 16; k++) { var ang = start + k * Math.PI / 4, rr = R * (1 - k / 40); pts.push([ox + Math.cos(ang) * rr, oy + Math.sin(ang) * rr]); }
+    } else if (kind === 'bounce') {
+      var bx = x, floor = H - 40;
+      for (var m = 0; m < 5; m++) { bx += rnd(90, 170); pts.push([bx - 50, floor - rnd(160, 320) / (m + 1)]); pts.push([bx, floor]); }
+    } else {
+      for (var w = 0; w < 7; w++) pts.push([rnd(W * .1, W * .9), rnd(H * .1, H * .9)]);
+    }
+    pts.push([W + 60, rnd(-40, H * .3)]); // exit, up and to the right
+    return pts;
+  }
 
-  // Fold the page so its bottom-right corner C lands on P. The crease is the perpendicular bisector of C and P.
-  function fold(P) {
-    var v = size(), C = { x: v.W, y: v.H };
-    var dx = C.x - P.x, dy = C.y - P.y, L = Math.hypot(dx, dy);
-    if (L < .5) { site.style.clipPath = ''; flap.setAttribute('d', ''); shade.setAttribute('d', ''); return; }
-    var n = { x: dx / L, y: dy / L }, M = { x: (C.x + P.x) / 2, y: (C.y + P.y) / 2 };
-    var r = site.getBoundingClientRect();
-    var rect = [{ x: r.left, y: r.top }, { x: r.right, y: r.top }, { x: r.right, y: r.bottom }, { x: r.left, y: r.bottom }];
-    var keep = [], cut = [];
-    function f(p) { return (p.x - M.x) * n.x + (p.y - M.y) * n.y; }
-    for (var i = 0; i < 4; i++) {
-      var a = rect[i], b = rect[(i + 1) % 4], fa = f(a), fb = f(b);
-      if (fa <= 0) keep.push(a);
-      if (fa >= 0) cut.push(a);
-      if ((fa < 0 && fb > 0) || (fa > 0 && fb < 0)) {
-        var t = fa / (fa - fb), X = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
-        keep.push(X); cut.push(X);
+  // Smooth the points into keyframes along Catmull-Rom style curves.
+  function keyframes(pts) {
+    var frames = [], steps = 14;
+    for (var i = 0; i < pts.length - 1; i++) {
+      var p0 = pts[Math.max(i - 1, 0)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(i + 2, pts.length - 1)];
+      var c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+      var c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+      for (var s = 0; s < steps; s++) {
+        var t = s / steps;
+        frames.push([bez(p1[0], c1[0], c2[0], p2[0], t), bez(p1[1], c1[1], c2[1], p2[1], t)]);
       }
     }
-    site.style.clipPath = keep.length > 2
-      ? 'polygon(' + keep.map(function (p) { return (p.x - r.left).toFixed(1) + 'px ' + (p.y - r.top).toFixed(1) + 'px'; }).join(',') + ')'
-      : 'polygon(0 0,0 0,0 0)';
-    if (cut.length < 3) { flap.setAttribute('d', ''); shade.setAttribute('d', ''); return; }
-    var back = cut.map(function (p) { var k = 2 * f(p); return { x: p.x - k * n.x, y: p.y - k * n.y }; });
-    flap.setAttribute('d', 'M' + pts(back).join('L') + 'Z');
-    shade.setAttribute('d', 'M' + pts(cut).join('L') + 'Z');
-    gF.setAttribute('x1', M.x); gF.setAttribute('y1', M.y); gF.setAttribute('x2', P.x); gF.setAttribute('y2', P.y);
-    var sl = Math.max(14, Math.min(70, L * .45));
-    gS.setAttribute('x1', M.x); gS.setAttribute('y1', M.y); gS.setAttribute('x2', M.x + n.x * sl); gS.setAttribute('y2', M.y + n.y * sl);
+    frames.push(pts[pts.length - 1]);
+    return frames.map(function (f, idx) {
+      var next = frames[Math.min(idx + 1, frames.length - 1)], prev = frames[Math.max(idx - 1, 0)];
+      var ang = Math.atan2(next[1] - prev[1], next[0] - prev[0]) * 180 / Math.PI + 45; // the glyph points up-right
+      var scale = 1 + Math.sin(idx / frames.length * Math.PI) * 1.6;
+      return { transform: 'translate(' + f[0] + 'px,' + f[1] + 'px) rotate(' + ang + 'deg) scale(' + scale + ')' };
+    });
   }
 
-  // Wind: layered slow sways, plus the odd gust that makes the corner flap
-  var ph = [0, 0, 0, 0, 0].map(function () { return Math.random() * 6.28; });
-  var gustAt = 0, nextGust = 1500 + Math.random() * 2500;
-  function windP(ms) {
-    var v = size(), t = ms / 1000, base = v.W <= 760 ? 34 : 44;
-    var sway = .22 * Math.sin(t * 1.1 + ph[0]) + .14 * Math.sin(t * 2.3 + ph[1]) + .06 * Math.sin(t * 4.7 + ph[2]);
-    var skew = .28 * Math.sin(t * .7 + ph[3]) + .12 * Math.sin(t * 1.9 + ph[4]);
-    if (ms - gustAt > nextGust) { gustAt = ms; nextGust = 2200 + Math.random() * 4500; }
-    var g = (ms - gustAt) / 1000, gust = g < 1.4 ? Math.sin(Math.PI * g / 1.4) * (.55 + .3 * Math.sin(g * 19)) : 0;
-    lift += (liftTo - lift) * .12;
-    var s = base * (1 + sway + gust * .9) + lift;
-    return { x: v.W - s * (1 + skew), y: v.H - s * (1 - skew) };
-  }
-
-  var cur = null;
-  function loop(ms) {
-    if (!turning) { cur = windP(ms); fold(cur); }
-    else {
-      var k = Math.min(1, (ms - turning.t0) / turning.dur);
-      var e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2, u = 1 - e, q = turning.p;
-      fold({
-        x: u*u*u*q[0].x + 3*u*u*e*q[1].x + 3*u*e*e*q[2].x + e*e*e*q[3].x,
-        y: u*u*u*q[0].y + 3*u*u*e*q[1].y + 3*u*e*e*q[2].y + e*e*e*q[3].y
-      });
-      if (k >= 1) { turning = null; window.location.href = href; return; }
-    }
-    requestAnimationFrame(loop);
-  }
-
-  if (reduce) { var v0 = size(); fold({ x: v0.W - 40, y: v0.H - 40 }); window.addEventListener('resize', function () { var v = size(); fold({ x: v.W - 40, y: v.H - 40 }); }); }
-  else requestAnimationFrame(loop);
-
-  ['pointerenter', 'focus'].forEach(function (ev) { link.addEventListener(ev, function () { liftTo = 34; loadUnder(); }); });
-  ['pointerleave', 'blur'].forEach(function (ev) { link.addEventListener(ev, function () { liftTo = 0; }); });
-  link.addEventListener('touchstart', loadUnder, { passive: true });
+  function go(href) { veil.classList.add('on'); setTimeout(function () { window.location.href = href; }, 600); }
 
   link.addEventListener('click', function (e) {
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-    if (reduce || turning) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return; // let new-tab clicks through
     e.preventDefault();
-    loadUnder();
-    var v = size();
-    turning = { t0: performance.now(), dur: 1000, p: [cur, { x: v.W * .45, y: v.H * .95 }, { x: -v.W * .5, y: v.H * .45 }, { x: -v.W * 1.3, y: -v.H * 1.3 }] };
+    if (busy) return;
+    busy = true;
+    var href = link.href;
+    if (reduce || !arrow || !document.body.animate) { go(href); return; }
+    var r = arrow.getBoundingClientRect();
+    var fly = document.createElement('span');
+    fly.className = 'flyer'; fly.textContent = '↗'; fly.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(fly);
+    link.classList.add('flying');
+    var frames = keyframes(route(r.left, r.top, window.innerWidth, window.innerHeight));
+    var anim = fly.animate(frames, { duration: rnd(1500, 2100), easing: 'cubic-bezier(.45,0,.25,1)', fill: 'forwards' });
+    setTimeout(function () { veil.classList.add('on'); }, 900);
+    anim.onfinish = function () { window.location.href = href; };
   });
 
-  // Back button (bfcache): lay the page flat again
-  window.addEventListener('pageshow', function (e) {
-    if (e.persisted) { turning = null; lift = liftTo = 0; if (!reduce) requestAnimationFrame(loop); }
+  // Coming back via the back button: clear the veil and reset.
+  window.addEventListener('pageshow', function () {
+    busy = false; veil.classList.remove('on'); link.classList.remove('flying');
+    document.querySelectorAll('.flyer').forEach(function (f) { f.remove(); });
   });
 })();
 </script>
