@@ -452,12 +452,13 @@ body { transition: background-color .7s ease; }
 
   var LIGHT = ['#fbfbfa', '#fdeeea', '#fdf4dc', '#eaf5e6', '#e6f2f7', '#eeebf9', '#f9eaf3'];
   var DARK  = ['#131416', '#1f1716', '#1e1b13', '#151d17', '#141b20', '#1a1722', '#20161c'];
-  var GRAVITY = 0.7;   // px per frame, per frame, pulling down
-  var BOUNCE = 0.75;   // speed kept on each hit (0 = thud, 1 = superball)
-  var AIR = 0.998;     // air drag per frame
-  var ROLL = 0.97;     // drag while rolling along the bottom
-  var MAX_SPEED = 70;  // px per frame
-  var MIN_HIT = 5;     // softer touches than this don't change the color
+  var GRAVITY = 0.42;  // px per frame, per frame; always pulls to the bottom
+  var BOUNCE = 0.88;   // speed kept on each hit (0 = thud, 1 = superball)
+  var AIR = 0.999;     // air drag per frame
+  var ROLL = 0.985;    // drag while rolling along the bottom
+  var MAX_SPEED = 80;  // px per frame
+  var MIN_HIT = 6;     // softer touches than this don't change the color
+  var WOBBLE = 0.5;    // how far it squashes on a hard hit (0 = rigid)
 
   var root = document.documentElement;
   var darkMq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
@@ -477,16 +478,29 @@ body { transition: background-color .7s ease; }
 
   var R = 10, x = 0, y = 0, vx = 0, vy = 0;
   var held = false, armed = false, grabDX = 0, grabDY = 0, samples = [], last = 0;
+  var q = 0, qv = 0, nx = 0, ny = 1, idle = 0, nextHop = 240; // jelly squash + boredom hops
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function squash(speed, ax, ay) {
+    nx = ax; ny = ay;
+    q = Math.max(q, Math.min(speed / 45, 1) * WOBBLE); qv = 0;
+  }
   function W() { return window.innerWidth; }
   function H() { return window.innerHeight; }
   function clampPos() {
     x = Math.min(Math.max(x, R), W() - R);
     y = Math.min(Math.max(y, R), H() - R);
   }
-  function draw() { ball.style.transform = 'translate3d(' + (x - R) + 'px,' + (y - R) + 'px,0)'; }
+  function draw() {
+    // squash flat against whatever it just hit, stretch along the direction of travel
+    var sx = nx ? 1 - q : 1 + q, sy = ny ? 1 - q : 1 + q;
+    var sp = held ? 0 : Math.sqrt(vx * vx + vy * vy);
+    var st = 1 + Math.min(sp / 90, 0.35), ang = Math.atan2(vy, vx);
+    var tx = x - R + nx * R * (1 - sx), ty = y - R + ny * R * (1 - sy);
+    ball.style.transform = 'translate3d(' + tx + 'px,' + ty + 'px,0) scale(' + sx + ',' + sy + ') rotate(' + ang + 'rad) scale(' + st + ',' + (1 / st) + ')';
+  }
 
   ball.addEventListener('pointerdown', function (e) {
-    held = true; armed = true; vx = vy = 0;
+    held = true; armed = true; vx = vy = 0; idle = 0;
     grabDX = e.clientX - x; grabDY = e.clientY - y;
     samples = [{ x: e.clientX, y: e.clientY, t: performance.now() }];
     try { ball.setPointerCapture(e.pointerId); } catch (err) {}
@@ -522,17 +536,23 @@ body { transition: background-color .7s ease; }
     if (!held) {
       var w = W(), h = H(), hit = false;
       var resting = y >= h - R - 0.5 && Math.abs(vy) < 1.5;
-      if (resting) { y = h - R; vy = 0; vx *= Math.pow(ROLL, f); if (Math.abs(vx) < 0.05) vx = 0; }
-      else { vy += GRAVITY * f; }
+      if (resting) {
+        y = h - R; vy = 0; vx *= Math.pow(ROLL, f); if (Math.abs(vx) < 0.05) vx = 0;
+        // gets bored sitting still: a little hop now and then (hops don't change the color)
+        idle += f;
+        if (idle > nextHop) { idle = 0; nextHop = rnd(180, 480); armed = false; vy = -rnd(7, 13); vx += rnd(-3, 3); y -= 1; }
+      } else { idle = 0; vy += GRAVITY * f; }
       x += vx * f; y += vy * f;
-      if (x < R)     { x = R;     if (Math.abs(vx) > MIN_HIT) hit = true; vx = -vx * BOUNCE; }
-      if (x > w - R) { x = w - R; if (Math.abs(vx) > MIN_HIT) hit = true; vx = -vx * BOUNCE; }
-      if (y < R)     { y = R;     if (Math.abs(vy) > MIN_HIT) hit = true; vy = -vy * BOUNCE; }
-      if (y > h - R) { y = h - R; if (Math.abs(vy) > MIN_HIT) hit = true; vy = -vy * BOUNCE; }
+      if (x < R)     { x = R;     squash(Math.abs(vx), -1, 0); if (Math.abs(vx) > MIN_HIT) { hit = true; vy -= rnd(0, 2); } vx = -vx * BOUNCE; }
+      if (x > w - R) { x = w - R; squash(Math.abs(vx), 1, 0);  if (Math.abs(vx) > MIN_HIT) { hit = true; vy -= rnd(0, 2); } vx = -vx * BOUNCE; }
+      if (y < R)     { y = R;     squash(Math.abs(vy), 0, -1); if (Math.abs(vy) > MIN_HIT) { hit = true; vx += rnd(-2, 2); } vy = -vy * BOUNCE; }
+      if (y > h - R) { y = h - R; squash(Math.abs(vy), 0, 1);  if (Math.abs(vy) > MIN_HIT) { hit = true; vx += rnd(-2, 2); } vy = -vy * BOUNCE; }
       if (hit && armed) nextColor();
       var drag = Math.pow(AIR, f);
       vx *= drag; vy *= drag;
     }
+    // jelly spring back to round
+    qv += (0 - q) * 0.22 * f; qv *= Math.pow(0.78, f); q += qv * f;
     draw();
     requestAnimationFrame(step);
   }
