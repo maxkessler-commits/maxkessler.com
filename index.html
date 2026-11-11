@@ -452,12 +452,12 @@ body { transition: background-color .7s ease; }
 
   var LIGHT = ['#fbfbfa', '#fdeeea', '#fdf4dc', '#eaf5e6', '#e6f2f7', '#eeebf9', '#f9eaf3'];
   var DARK  = ['#131416', '#1f1716', '#1e1b13', '#151d17', '#141b20', '#1a1722', '#20161c'];
-  var GRAVITY = 0.18;  // px per frame, per frame; always pulls to the bottom
-  var BOUNCE = 0.9;    // speed kept on each hit (0 = thud, 1 = superball)
-  var AIR = 0.999;     // air drag per frame
+  var GRAVITY = 0.8;   // px per frame, per frame; always pulls to the bottom
+  var BOUNCE = 0.84;   // speed kept on each hit (0 = thud, 1 = superball)
+  var AIR = 0.992;     // air drag per frame
   var ROLL = 0.985;    // drag while rolling along the bottom
   var MAX_SPEED = 80;  // px per frame
-  var MIN_HIT = 4;     // softer touches than this don't change the color
+  var MIN_HIT = 5;     // softer touches than this don't change the color
   var WALL = 1.2;      // side and top walls are springy: they throw it back faster than it came in
   var WALL_KICK = 6;   // least speed a springy wall sends it back with
   var WALL_TOP = 30;   // walls stop adding speed above this
@@ -552,7 +552,7 @@ body { transition: background-color .7s ease; }
         y = h - R; vy = 0; vx *= Math.pow(ROLL, f); if (Math.abs(vx) < 0.05) vx = 0;
         // gets bored sitting still: a little hop now and then (hops don't change the color)
         idle += f;
-        if (idle > nextHop) { idle = 0; nextHop = rnd(180, 480); armed = false; pep = 1; vy = -rnd(4, 8); vx += rnd(-3, 3); y -= 1; }
+        if (idle > nextHop) { idle = 0; nextHop = rnd(180, 480); armed = false; pep = 1; vy = -rnd(8, 13); vx += rnd(-3, 3); y -= 1; }
       } else { idle = 0; vy += GRAVITY * f; }
       x += vx * f; y += vy * f;
       if (x < R)     { x = R;     squash(Math.abs(vx), -1, 0); if (Math.abs(vx) > MIN_HIT) { hit = true; vy -= rnd(0, 2); } vx = spring(vx); }
