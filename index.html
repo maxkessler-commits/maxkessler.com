@@ -151,12 +151,30 @@ a:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radi
 body { transition: background-color .7s ease; }
 #ball {
   position: fixed; left: 0; top: 0; z-index: 18;
-  width: 20px; height: 20px; border-radius: 50%;
-  background: var(--fg);
+  width: 34px; height: 34px; border-radius: 50%;
+  /* frosted glass: translucent, blurs whatever is behind it, soft highlight up top */
+  background: radial-gradient(circle at 32% 26%, rgba(255,255,255,.9), rgba(255,255,255,.45) 55%, rgba(255,255,255,.22));
+  -webkit-backdrop-filter: blur(5px) saturate(1.5); backdrop-filter: blur(5px) saturate(1.5);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.07),
+    0 6px 16px rgba(0,0,0,.13),
+    inset 0 0 0 1px rgba(255,255,255,.75),
+    inset 0 -5px 9px rgba(0,0,0,.07),
+    inset 0 3px 4px rgba(255,255,255,.9);
   cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
   will-change: transform;
 }
-#ball::before { content: ""; position: absolute; inset: -12px; border-radius: 50%; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #ball {
+    background: radial-gradient(circle at 32% 26%, rgba(255,255,255,.34), rgba(255,255,255,.13) 55%, rgba(255,255,255,.07));
+    box-shadow: 0 0 0 1px rgba(255,255,255,.1), 0 6px 16px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.16), inset 0 -5px 9px rgba(0,0,0,.25), inset 0 3px 4px rgba(255,255,255,.28);
+  }
+}
+:root[data-theme="dark"] #ball {
+  background: radial-gradient(circle at 32% 26%, rgba(255,255,255,.34), rgba(255,255,255,.13) 55%, rgba(255,255,255,.07));
+  box-shadow: 0 0 0 1px rgba(255,255,255,.1), 0 6px 16px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.16), inset 0 -5px 9px rgba(0,0,0,.25), inset 0 3px 4px rgba(255,255,255,.28);
+}
+#ball::before { content: ""; position: absolute; inset: -8px; border-radius: 50%; }
 #ball.held { cursor: grabbing; }
 @media (prefers-reduced-motion: reduce) { #ball { display: none; } }
 </style>
@@ -351,31 +369,17 @@ body { transition: background-color .7s ease; }
     return u*u*u*p0 + 3*u*u*t*p1 + 3*u*t*t*p2 + t*t*t*p3;
   }
 
-  // A few kinds of whimsical routes, each a chain of points the arrow visits.
+  // One calm paper-plane glide: lifts off, rides a couple of soft, fading swells, and drifts out the top right.
   function route(x, y, W, H) {
-    var kind = pick(['loops', 'zigzag', 'orbit', 'bounce', 'wander']);
     var pts = [[x, y]];
-    if (kind === 'loops') {
-      var cx = x + rnd(60, 160), cy = y - rnd(40, 120);
-      for (var i = 0; i < 3; i++) {
-        var r = rnd(40, 90);
-        cx += rnd(80, 180); cy += rnd(-90, 60);
-        for (var a = 0; a <= 1; a += 0.25) pts.push([cx + Math.cos(a * Math.PI * 2 + Math.PI) * r, cy + Math.sin(a * Math.PI * 2 + Math.PI) * r]);
-      }
-    } else if (kind === 'zigzag') {
-      var n = 6 + Math.floor(rnd(0, 4)), cx = x;
-      for (var j = 0; j < n; j++) { cx += W / (n + 1); pts.push([cx, j % 2 ? rnd(H * .15, H * .35) : rnd(H * .6, H * .85)]); }
-    } else if (kind === 'orbit') {
-      var ox = W * rnd(.4, .6), oy = H * rnd(.4, .6), R = Math.min(W, H) * rnd(.22, .34);
-      var start = Math.atan2(y - oy, x - ox);
-      for (var k = 1; k <= 16; k++) { var ang = start + k * Math.PI / 4, rr = R * (1 - k / 40); pts.push([ox + Math.cos(ang) * rr, oy + Math.sin(ang) * rr]); }
-    } else if (kind === 'bounce') {
-      var bx = x, floor = H - 40;
-      for (var m = 0; m < 5; m++) { bx += rnd(90, 170); pts.push([bx - 50, floor - rnd(160, 320) / (m + 1)]); pts.push([bx, floor]); }
-    } else {
-      for (var w = 0; w < 7; w++) pts.push([rnd(W * .1, W * .9), rnd(H * .1, H * .9)]);
+    var endX = W + 60, endY = rnd(H * .06, H * .2);
+    var amp = Math.min(H * .1, 84) * rnd(.75, 1.1), swells = rnd(1.1, 1.5), n = 9;
+    for (var i = 1; i < n; i++) {
+      var t = i / n, ease = t * t * (3 - 2 * t);
+      var swell = -Math.sin(t * Math.PI * 2 * swells) * amp * (1 - t * .6); // starts by rising, fades as it goes
+      pts.push([x + (endX - x) * t, y + (endY - y) * ease + swell]);
     }
-    pts.push([W + 60, rnd(-40, H * .3)]); // exit, up and to the right
+    pts.push([endX, endY]);
     return pts;
   }
 
@@ -395,7 +399,7 @@ body { transition: background-color .7s ease; }
     return frames.map(function (f, idx) {
       var next = frames[Math.min(idx + 1, frames.length - 1)], prev = frames[Math.max(idx - 1, 0)];
       var ang = Math.atan2(next[1] - prev[1], next[0] - prev[0]) * 180 / Math.PI + 45; // the glyph points up-right
-      var scale = 1 + Math.sin(idx / frames.length * Math.PI) * 1.2;
+      var scale = 1 + Math.sin(idx / frames.length * Math.PI) * 0.45;
       return { x: f[0], y: f[1], transform: 'translate(' + f[0] + 'px,' + f[1] + 'px) rotate(' + ang + 'deg) scale(' + scale + ')' };
     });
   }
@@ -416,7 +420,7 @@ body { transition: background-color .7s ease; }
     link.classList.add('flying');
     var pts = route(r.left, r.top, window.innerWidth, window.innerHeight);
     var frames = keyframes(pts);
-    var dur = rnd(1700, 2300), ease = 'cubic-bezier(.45,0,.25,1)';
+    var dur = rnd(2100, 2500), ease = 'cubic-bezier(.4,0,.5,1)';
     // dotted trail drawn behind the plane
     var ns = 'http://www.w3.org/2000/svg', trail = document.createElementNS(ns, 'svg'), tp = document.createElementNS(ns, 'path');
     trail.setAttribute('class', 'trail'); trail.setAttribute('width', window.innerWidth); trail.setAttribute('height', window.innerHeight);
@@ -479,7 +483,7 @@ body { transition: background-color .7s ease; }
     colorIndex = 0; root.style.removeProperty('--bg');
   });
 
-  var R = 10, x = 0, y = 0, vx = 0, vy = 0;
+  var R = 17, x = 0, y = 0, vx = 0, vy = 0;
   var held = false, armed = false, grabDX = 0, grabDY = 0, samples = [], last = 0;
   var q = 0, qv = 0, nx = 0, ny = 1, idle = 0, nextHop = 240; // jelly squash + boredom hops
   function rnd(a, b) { return a + Math.random() * (b - a); }
@@ -542,43 +546,6 @@ body { transition: background-color .7s ease; }
   ball.addEventListener('pointerup', release);
   ball.addEventListener('pointercancel', release);
   window.addEventListener('resize', clampPos);
-
-  // Swat it: a moving mouse knocks the ball away, as hard as the mouse was going.
-  // Slow approaches don't count, so it can still be picked up.
-  var SWAT_MIN = 4;     // cursor speed (px per frame) below which it doesn't knock the ball
-  var SWAT_POWER = 1.3; // how much of the cursor's speed the ball takes
-  var SWAT_R = R + 8;   // how close the cursor has to pass
-  var mx = null, my = 0, mt = 0;
-  window.addEventListener('pointermove', function (e) {
-    if (e.pointerType !== 'mouse') return;
-    var now = performance.now(), px = mx, py = my, dt = now - mt;
-    mx = e.clientX; my = e.clientY; mt = now;
-    if (held || px === null || dt <= 0 || dt > 100) return;
-    var dx = mx - px, dy = my - py, len2 = dx * dx + dy * dy;
-    if (!len2) return;
-    var cvx = dx / dt * 16.67, cvy = dy / dt * 16.67;
-    if (Math.sqrt(cvx * cvx + cvy * cvy) < SWAT_MIN) return;
-    // where along its path the cursor first touches the ball, so fast flicks don't pass straight through
-    var fx = px - x, fy = py - y, hx, hy, d;
-    var c = fx * fx + fy * fy - SWAT_R * SWAT_R, t = 0;
-    if (c > 0) {
-      var bq = fx * dx + fy * dy, disc = bq * bq - len2 * c;
-      if (bq >= 0 || disc < 0) return;        // moving away, or misses
-      t = (-bq - Math.sqrt(disc)) / len2;
-      if (t > 1) return;                      // hasn't reached it yet
-    }
-    hx = x - (px + dx * t); hy = y - (py + dy * t); d = Math.sqrt(hx * hx + hy * hy);
-    if (d < 0.5) { var l = Math.sqrt(len2); hx = dx / l; hy = dy / l; } else { hx /= d; hy /= d; }
-    var closing = (cvx - vx) * hx + (cvy - vy) * hy; // how fast the cursor is coming at the ball
-    if (closing <= 0) return;
-    vx += hx * closing * SWAT_POWER; vy += hy * closing * SWAT_POWER;
-    var sp = Math.sqrt(vx * vx + vy * vy);
-    if (sp > MAX_SPEED) { vx *= MAX_SPEED / sp; vy *= MAX_SPEED / sp; }
-    if (y >= H() - R - 0.5 && vy > -1.5) y -= 1; // unstick it from the bottom
-    armed = true; pep = 1; idle = 0;
-    q = Math.max(q, Math.min(closing / 45, 1) * WOBBLE); qv = 0;
-    if (Math.abs(hx) > Math.abs(hy)) { nx = hx > 0 ? -1 : 1; ny = 0; } else { nx = 0; ny = hy > 0 ? -1 : 1; }
-  });
 
   function step(now) {
     var f = Math.min((now - last) / 16.67, 3); last = now;
