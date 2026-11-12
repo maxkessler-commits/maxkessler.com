@@ -543,6 +543,43 @@ body { transition: background-color .7s ease; }
   ball.addEventListener('pointercancel', release);
   window.addEventListener('resize', clampPos);
 
+  // Swat it: a moving mouse knocks the ball away, as hard as the mouse was going.
+  // Slow approaches don't count, so it can still be picked up.
+  var SWAT_MIN = 4;     // cursor speed (px per frame) below which it doesn't knock the ball
+  var SWAT_POWER = 1.3; // how much of the cursor's speed the ball takes
+  var SWAT_R = R + 8;   // how close the cursor has to pass
+  var mx = null, my = 0, mt = 0;
+  window.addEventListener('pointermove', function (e) {
+    if (e.pointerType !== 'mouse') return;
+    var now = performance.now(), px = mx, py = my, dt = now - mt;
+    mx = e.clientX; my = e.clientY; mt = now;
+    if (held || px === null || dt <= 0 || dt > 100) return;
+    var dx = mx - px, dy = my - py, len2 = dx * dx + dy * dy;
+    if (!len2) return;
+    var cvx = dx / dt * 16.67, cvy = dy / dt * 16.67;
+    if (Math.sqrt(cvx * cvx + cvy * cvy) < SWAT_MIN) return;
+    // where along its path the cursor first touches the ball, so fast flicks don't pass straight through
+    var fx = px - x, fy = py - y, hx, hy, d;
+    var c = fx * fx + fy * fy - SWAT_R * SWAT_R, t = 0;
+    if (c > 0) {
+      var bq = fx * dx + fy * dy, disc = bq * bq - len2 * c;
+      if (bq >= 0 || disc < 0) return;        // moving away, or misses
+      t = (-bq - Math.sqrt(disc)) / len2;
+      if (t > 1) return;                      // hasn't reached it yet
+    }
+    hx = x - (px + dx * t); hy = y - (py + dy * t); d = Math.sqrt(hx * hx + hy * hy);
+    if (d < 0.5) { var l = Math.sqrt(len2); hx = dx / l; hy = dy / l; } else { hx /= d; hy /= d; }
+    var closing = (cvx - vx) * hx + (cvy - vy) * hy; // how fast the cursor is coming at the ball
+    if (closing <= 0) return;
+    vx += hx * closing * SWAT_POWER; vy += hy * closing * SWAT_POWER;
+    var sp = Math.sqrt(vx * vx + vy * vy);
+    if (sp > MAX_SPEED) { vx *= MAX_SPEED / sp; vy *= MAX_SPEED / sp; }
+    if (y >= H() - R - 0.5 && vy > -1.5) y -= 1; // unstick it from the bottom
+    armed = true; pep = 1; idle = 0;
+    q = Math.max(q, Math.min(closing / 45, 1) * WOBBLE); qv = 0;
+    if (Math.abs(hx) > Math.abs(hy)) { nx = hx > 0 ? -1 : 1; ny = 0; } else { nx = 0; ny = hy > 0 ? -1 : 1; }
+  });
+
   function step(now) {
     var f = Math.min((now - last) / 16.67, 3); last = now;
     if (!held) {
